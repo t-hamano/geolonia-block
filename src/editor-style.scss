@@ -1,0 +1,65 @@
+.geolonia-setting {
+	display: flex;
+	justify-content: flex-end;
+	margin-left: auto;
+	padding: 0 16px 8px;
+}
+
+.geolonia-setting-modal {
+	max-width: 600px;
+
+	.components-modal__content {
+		margin-bottom: 60px;
+		padding-bottom: 40px;
+	}
+
+	&__control {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		height: 60px;
+		padding: 0 24px;
+		background: #fff;
+	}
+
+	&__notice {
+		position: absolute !important;
+		right: 24px;
+		bottom: 60px;
+		left: 24px;
+		z-index: 6;
+		margin: 0;
+		padding-top: 0;
+		padding-bottom: 0;
+
+		&.is-dismissible {
+			padding-right: 8px;
+
+			svg {
+				width: 16px;
+				height: 16px;
+			}
+		}
+
+		.components-button {
+			align-self: center;
+		}
+	}
+
+	&__loading {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 5;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: rgba(0, 0, 0, 0.2);
+	}
+}

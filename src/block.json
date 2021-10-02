@@ -1,0 +1,7 @@
+{
+	"apiVersion": 2,
+	"name": "geolonia-block/map",
+	"title": "Geolonia Map",
+	"category": "common",
+	"textdomain": "geolonia-block"
+}
