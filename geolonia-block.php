@@ -1,6 +1,7 @@
 <?php
 /**
  * Plugin Name: Geolonia Block
+ * Description: Embeds maps in a variety of styles with Geolonia Maps.
  * Version: 1.0.0
  * Author: Tetsuaki Hamano
  * Author URI: https://github.com/t-hamano

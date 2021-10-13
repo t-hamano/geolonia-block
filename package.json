@@ -7,32 +7,21 @@
 		"wp-env": "wp-env",
 		"open": "wp-env start && opener http://localhost:8888",
 		"stop": "wp-env stop",
-		"start": "chokidar \"src/**/*\" -c \"npm-run-all -p js:sourcemap sass:expanded\" --initial",
-		"build": "npm-run-all -s clean js:compressed sass:compressed",
-		"sass:expanded": "sass src/editor-style.scss:build/editor-style.css --style=expanded",
-		"sass:compressed": "sass src/editor-style.scss:build/editor-style.css --style=compressed --no-source-map",
-		"js:sourcemap": "cross-env NODE_ENV=development wp-scripts build src/index --output-path build",
-		"js:compressed": "wp-scripts build src/index --output-path build",
+		"start": "wp-scripts start",
+		"build": "wp-scripts build",
 		"clean": "rimraf build",
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
 		"lint:php": "composer lint"
 	},
 	"devDependencies": {
-		"@emotion/react": "^11.4.1",
-		"@emotion/styled": "^11.3.0",
-		"@wordpress/env": "^4.1.0",
-		"@wordpress/icons": "^5.0.0",
-		"@wordpress/scripts": "^17.1.0",
-		"chokidar-cli": "^3.0.0",
-		"cross-env": "^7.0.3",
-		"eslint-config-wordpress": "^2.0.0",
-		"npm-run-all": "^4.1.5",
+		"@wordpress/env": "^4.1.2",
+		"@wordpress/icons": "^6.0.0",
+		"@wordpress/scripts": "^18.1.0",
 		"opener": "^1.5.2",
-		"rimraf": "^3.0.2",
 		"stylelint-config-rational-order": "^0.1.2"
 	},
 	"dependencies": {
-		"@geolonia/embed-react": "^1.0.0"
+		"@geolonia/embed-react": "^1.2.0"
 	}
 }

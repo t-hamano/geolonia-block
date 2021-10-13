@@ -10,6 +10,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
+import './style.scss';
 import './store';
 import metadata from './block.json';
 import edit from './edit';

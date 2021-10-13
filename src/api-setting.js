@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
-import { Button, TextControl, Modal, Spinner, Notice } from '@wordpress/components';
+import { Button, TextControl, Modal, Spinner, Notice, ExternalLink } from '@wordpress/components';
 import { cog } from '@wordpress/icons';
 
 /**
@@ -29,7 +29,12 @@ export default function ApiSetting() {
 		setNotice();
 	}, [ isModalOpen ] );
 
-	const handleUpdateOption = () => {
+	const onChangeKey = ( value ) => {
+		setApiKey( value );
+	};
+
+	const onRegisterKey = ( event ) => {
+		event.preventDefault();
 		setIsWaiting( true );
 		setNotice();
 		setOption( apiKey );
@@ -71,7 +76,7 @@ export default function ApiSetting() {
 						setIsModalopen( true );
 					} }
 				>
-					{ __( 'Register API Key', 'geolonia-block' ) }
+					{ __( 'Register API key', 'geolonia-block' ) }
 				</Button>
 			</div>
 			{ isModalOpen && (
@@ -85,11 +90,29 @@ export default function ApiSetting() {
 							<Spinner />
 						</div>
 					) }
-					<TextControl
-						placeholder={ __( 'Paste API Key', 'geolonia-block' ) }
-						value={ apiKey }
-						onChange={ ( value ) => setApiKey( value ) }
-					/>
+					<form className="geolonia-setting-modal__form" onSubmit={ onRegisterKey }>
+						<TextControl
+							className="geolonia-setting-modal__input"
+							autoComplete="off"
+							placeholder={ __( 'Enter your API key…', 'geolonia-block' ) }
+							onChange={ onChangeKey }
+						/>
+						<Button
+							className="geolonia-setting-modal__button"
+							isPrimary
+							variant="primary"
+							type="submit"
+						>
+							{ __( 'Register' ) }
+						</Button>
+					</form>
+					<div className="geolonia-setting-modal__link">
+						<ExternalLink
+							href={ __( 'https://docs.geolonia.com/tutorial/002/', 'geolonia-block' ) }
+						>
+							{ __( 'About obtaining Geolonia Map API key', 'geolonia-block' ) }
+						</ExternalLink>
+					</div>
 					{ notice?.status && notice?.message && (
 						<Notice
 							className="geolonia-setting-modal__notice"
@@ -102,11 +125,6 @@ export default function ApiSetting() {
 							{ notice.message }
 						</Notice>
 					) }
-					<div className="geolonia-setting-modal__control">
-						<Button isPrimary disabled={ isWaiting } onClick={ handleUpdateOption }>
-							{ __( 'Save', 'geolonia-block' ) }
-						</Button>
-					</div>
 				</Modal>
 			) }
 		</>

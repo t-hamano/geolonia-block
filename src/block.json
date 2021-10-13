@@ -2,6 +2,83 @@
 	"apiVersion": 2,
 	"name": "geolonia-block/map",
 	"title": "Geolonia Map",
-	"category": "common",
-	"textdomain": "geolonia-block"
+	"category": "embeds",
+	"keywords": [ "map", "geolonia"],
+	"description": "Embeds maps in a variety of styles with Geolonia Maps.",
+	"textdomain": "geolonia-block",
+	"supports": {
+		"anchor": true,
+		"align": true
+	},
+	"attributes": {
+		"useRender": {
+			"type": "boolean",
+			"default": true
+		},
+		"mapStyle": {
+			"type": "string",
+			"default": "geolonia/basic"
+		},
+		"pitch": {
+			"type": "number",
+			"default": 0
+		},
+		"zoom": {
+			"type": "number",
+			"default": 0
+		},
+		"minZoom": {
+			"type": "number"
+		},
+		"maxZoom": {
+			"type": "number"
+		},
+		"bearing": {
+			"type": "number",
+			"default": 0
+		},
+		"lang": {
+			"type": "string",
+			"default": "auto"
+		},
+		"geoloniaControl": {
+			"type": "string",
+			"default": "bottom-left"
+		},
+		"navigationControl": {
+			"type": "string",
+			"default": "top-right"
+		},
+		"geolocateControl": {
+			"type": "string",
+			"default": "off"
+		},
+		"fullscreenControl": {
+			"type": "string",
+			"default": "off"
+		},
+		"scaleControl": {
+			"type": "string",
+			"default": "off"
+		},
+		"gestureHandling": {
+			"type": "boolean",
+			"default": true
+		},
+		"render3d": {
+			"type": "boolean",
+			"default": false
+		},
+		"loader": {
+			"type": "boolean",
+			"default": true
+		},
+		"lazyLoading": {
+			"type": "boolean",
+			"default": true
+		}
+	},
+	"editorScript": "file:../build/index.js",
+	"editorStyle": "file:../build/index.css",
+	"style": "file:../build/style-index.css"
 }

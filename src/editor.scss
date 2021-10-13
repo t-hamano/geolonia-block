@@ -1,0 +1,103 @@
+.wp-block-geolonia-block {
+
+	&__placeholder-form {
+
+		.components-base-control__field {
+			margin-bottom: 0;
+		}
+	}
+
+	&__placeholder-input {
+		flex: 1;
+		margin-right: 8px;
+
+		.components-text-control__input {
+			height: 36px;
+		}
+	}
+
+	&__placeholder-link {
+		margin-top: 16px;
+		margin-left: auto;
+		color: var(--wp-admin-theme-color) !important;
+	}
+}
+
+.geolonia-inspector-controls-help {
+	color: #757575;
+	font-size: 12px;
+}
+
+.geolonia-setting {
+	display: flex;
+	justify-content: flex-end;
+	margin-left: auto;
+	padding: 0 16px 8px;
+}
+
+.geolonia-setting-modal {
+	min-width: 640px;
+
+	.components-modal__content {
+		padding-bottom: 80px;
+	}
+
+	.components-base-control__field {
+		margin-bottom: 0;
+	}
+
+	&__form {
+		display: flex;
+		align-items: center;
+	}
+
+	&__input {
+		flex: 1;
+		margin-right: 8px;
+
+		.components-text-control__input {
+			height: 36px;
+		}
+	}
+
+	&__link {
+		margin-top: 16px;
+		text-align: right;
+	}
+
+	&__notice {
+		right: 32px;
+		bottom: 32px;
+		left: 32px;
+		margin: 0;
+		padding-top: 0;
+		padding-bottom: 0;
+
+		&.is-dismissible {
+			position: absolute;
+			padding-right: 8px;
+
+			svg {
+				width: 16px;
+				height: 16px;
+			}
+		}
+
+		.components-button {
+			align-self: center;
+		}
+	}
+
+	&__loading {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 10;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: rgba(0, 0, 0, 0.2);
+	}
+}
