@@ -9,6 +9,10 @@ export const STORE_NAME = 'geolonia-block';
 // Rest API routes.
 export const REST_API_ROUTE = '/geolonia-block/v1/option';
 
+// Available units on UnitControl component.
+export const WIDTH_UNITS = [ 'px', '%', 'vw', 'vh' ];
+export const HEIGHT_UNITS = [ 'px', '%', 'vw', 'vh' ];
+
 // Map settings options.
 export const MAP_STYLE_CONTROLS = [
 	{

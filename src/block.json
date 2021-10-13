@@ -11,6 +11,14 @@
 		"align": true
 	},
 	"attributes": {
+		"width": {
+			"type": "string",
+			"default": "100%"
+		},
+		"height": {
+			"type": "string",
+			"default": "400px"
+		},
 		"useRender": {
 			"type": "boolean",
 			"default": true
@@ -76,6 +84,17 @@
 		"lazyLoading": {
 			"type": "boolean",
 			"default": true
+		},
+		"geoJsonUrl": {
+			"type": "string"
+		},
+		"cluster": {
+			"type": "string",
+			"default": "off"
+		},
+		"clusterColor": {
+			"type": "string",
+			"default": "#ff0000"
 		}
 	},
 	"editorScript": "file:../build/index.js",
