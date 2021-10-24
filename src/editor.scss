@@ -22,7 +22,7 @@
 		color: var(--wp-admin-theme-color) !important;
 	}
 
-	&__inner {
+	&__map-wrap {
 		width: 100%;
 		min-width: 100px;
 		height: 100px;
@@ -32,6 +32,25 @@
 	&__map {
 		width: 100%;
 		height: 100%;
+	}
+
+	&__search-form {
+		display: flex;
+		align-items: center;
+		margin-bottom: 8px;
+
+		.components-base-control__field {
+			margin-bottom: 0;
+		}
+	}
+
+	&__search-input {
+		flex: 1;
+		margin-right: 8px;
+
+		.components-text-control__input {
+			height: 36px;
+		}
 	}
 }
 
@@ -117,13 +136,6 @@
 .geolonia-inspector-controls-help {
 	color: #757575;
 	font-size: 12px;
-}
-
-.geolonia-setting {
-	display: flex;
-	justify-content: flex-end;
-	margin-left: auto;
-	padding: 0 16px 8px;
 }
 
 .geolonia-setting-modal {

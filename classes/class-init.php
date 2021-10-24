@@ -1,11 +1,11 @@
 <?php
 /**
- * @package geolonia-block
+ * @package Georonia_Block
  * @author Tetsuaki Hamano
  * @license GPL-2.0+
  */
 
-namespace geolonia_block;
+namespace Geolonia_Block;
 
 class Init {
 

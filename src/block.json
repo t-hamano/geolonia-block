@@ -96,8 +96,5 @@
 			"type": "string",
 			"default": "#ff0000"
 		}
-	},
-	"editorScript": "file:../build/index.js",
-	"editorStyle": "file:../build/index.css",
-	"style": "file:../build/style-index.css"
+	}
 }

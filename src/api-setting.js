@@ -66,19 +66,9 @@ export default function ApiSetting() {
 
 	return (
 		<>
-			<div className="geolonia-setting">
-				<Button
-					className="geolonia-setting-button"
-					icon={ cog }
-					isLink
-					iconSize="20"
-					onClick={ () => {
-						setIsModalopen( true );
-					} }
-				>
-					{ __( 'Register API key', 'geolonia-block' ) }
-				</Button>
-			</div>
+			<Button icon={ cog } isLink variant="link" onClick={ () => setIsModalopen( true ) }>
+				{ __( 'Register API key', 'geolonia-block' ) }
+			</Button>
 			{ isModalOpen && (
 				<Modal
 					title={ __( 'Register API Key', 'geolonia-block' ) }

@@ -8,7 +8,7 @@
  * License: GPL2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: geolonia-block
- * @package geolonia-block
+ * @package Georonia_Block
  * @author Tetsuaki Hamano
  * @license GPL-2.0+
  */
@@ -22,4 +22,4 @@ define( 'GEOLONIA_URL', untrailingslashit( plugin_dir_url( __FILE__ ) ) );
 
 require_once __DIR__ . '/classes/class-init.php';
 
-new geolonia_block\Init();
+new Geolonia_Block\Init();

@@ -11,6 +11,7 @@ import { useState, useEffect } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
 import {
+	BaseControl,
 	Placeholder,
 	TextControl,
 	SelectControl,
@@ -19,7 +20,6 @@ import {
 	ExternalLink,
 	PanelBody,
 	ToggleControl,
-	BaseControl,
 	__experimentalUnitControl as UnitControl,
 	__experimentalUseCustomUnits as useCustomUnits,
 } from '@wordpress/components';
@@ -31,6 +31,7 @@ import { BlockIcon, InspectorControls, useBlockProps } from '@wordpress/block-ed
  */
 import './editor.scss';
 import { STORE_NAME } from './store';
+import ApiSetting from './api-setting';
 import {
 	REST_API_ROUTE,
 	MAP_STYLE_CONTROLS,
@@ -73,6 +74,7 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	const [ apiKey, setApiKey ] = useState();
 	const [ isRender, setIsRender ] = useState( true );
+	const [ searchAddress, setSearchAddress ] = useState();
 
 	const widthUnits = useCustomUnits( { availableUnits: WIDTH_UNITS } );
 	const heightUnits = useCustomUnits( { availableUnits: HEIGHT_UNITS } );
@@ -100,6 +102,11 @@ export default function Edit( { attributes, setAttributes } ) {
 			method: 'POST',
 			data: { apiKey },
 		} ).then( () => {} );
+	};
+
+	const onSearchLatLng = ( event ) => {
+		event.preventDefault();
+		// TODO:テキストから緯度経度を探す処理
 	};
 
 	// Force components to be re-rendered.
@@ -146,152 +153,124 @@ export default function Edit( { attributes, setAttributes } ) {
 			) : (
 				<>
 					<InspectorControls>
+						<PanelBody title={ __( 'API Key Setting', 'geolonia-block' ) } initialOpen={ false }>
+							<ApiSetting />
+						</PanelBody>
 						<PanelBody title={ __( 'Map Settings', 'geolonia-block' ) } initialOpen={ true }>
-							<p className="geolonia-inspector-controls-help">
-								{ __(
-									'Note: Click on "Apply Settings" to reflect items other than Map Style and Zoom Level. ',
-									'geolonia-block'
-								) }
-							</p>
 							<ToggleControl
 								label={ __( 'Enable map rendering', 'geolonia-block' ) }
 								checked={ useRender }
 								onChange={ ( value ) => setAttributes( { useRender: !! value } ) }
 							/>
-							<BaseControl id="geolonia-block/width" label={ __( 'Map Width', 'geolonia-block' ) }>
+							<BaseControl id="geolonia-map-width" label={ __( 'Map Width', 'geolonia-block' ) }>
 								<UnitControl
 									value={ width }
 									units={ widthUnits }
-									onChange={ ( value ) => {
-										setAttributes( { width: value } );
-									} }
+									onChange={ ( value ) => setAttributes( { width: value } ) }
 								/>
 							</BaseControl>
-							<BaseControl
-								id="geolonia-block/height"
-								label={ __( 'Map Height', 'geolonia-block' ) }
-							>
+							<BaseControl id="geolonia-map-height" label={ __( 'Map Height', 'geolonia-block' ) }>
 								<UnitControl
 									value={ height }
 									units={ heightUnits }
-									onChange={ ( value ) => {
-										setAttributes( { height: value } );
-									} }
+									onChange={ ( value ) => setAttributes( { height: value } ) }
 								/>
 							</BaseControl>
-							<BaseControl
-								id="geolonia-block/map-style"
-								label={ __( 'Map Style', 'geolonia-block' ) }
-							>
+							<BaseControl id="geolonia-map-style" label={ __( 'Map Style', 'geolonia-block' ) }>
 								<SelectControl
 									value={ mapStyle }
-									options={ MAP_STYLE_CONTROLS.map( ( { label, value } ) => {
-										return { label, value };
-									} ) }
+									options={ MAP_STYLE_CONTROLS.map( ( { label, value } ) => ( {
+										label,
+										value,
+									} ) ) }
 									onChange={ ( value ) => setAttributes( { mapStyle: value } ) }
 								/>
 							</BaseControl>
-							<BaseControl id="geolonia-block/pitch" label={ __( 'Pitch', 'geolonia-block' ) }>
-								<RangeControl
-									value={ pitch }
-									onChange={ ( value ) => {
-										const pitchValue = Math.min( Math.max( value, 0 ), 60 );
-										setAttributes( { pitch: pitchValue } );
-									} }
-									initialPosition={ 0 }
-									min={ 0 }
-									max={ 60 }
-								/>
-							</BaseControl>
-							<BaseControl id="geolonia-block/zoom" label={ __( 'Zoom Level', 'geolonia-block' ) }>
-								<RangeControl
-									value={ zoom }
-									onChange={ ( value ) => {
-										const zoomValue = Math.min( Math.max( value, 0 ), 24 );
-										setAttributes( { zoom: zoomValue } );
-									} }
-									initialPosition={ 0 }
-									min={ 0 }
-									max={ 24 }
-								/>
-							</BaseControl>
-							<BaseControl
-								id="geolonia-block/min-zoom"
+							<RangeControl
+								label={ __( 'Pitch', 'geolonia-block' ) }
+								value={ pitch }
+								onChange={ ( value ) => {
+									const pitchValue = Math.min( Math.max( value, 0 ), 60 );
+									setAttributes( { pitch: pitchValue } );
+								} }
+								initialPosition={ 0 }
+								min={ 0 }
+								max={ 60 }
+							/>
+							<RangeControl
+								label={ __( 'Zoom Level', 'geolonia-block' ) }
+								value={ zoom }
+								onChange={ ( value ) => {
+									const zoomValue = Math.min( Math.max( value, 0 ), 24 );
+									setAttributes( { zoom: zoomValue } );
+								} }
+								initialPosition={ 0 }
+								min={ 0 }
+								max={ 24 }
+							/>
+							<RangeControl
 								label={ __( 'Min Zoom Level', 'geolonia-block' ) }
-							>
-								<RangeControl
-									value={ minZoom }
-									allowReset
-									min={ 0 }
-									max={ 24 }
-									onChange={ ( value ) => {
-										const minZoomValue = value ? Math.min( Math.max( value, 0 ), 24 ) : undefined;
-										setAttributes( { minZoom: minZoomValue } );
-									} }
-								/>
-							</BaseControl>
-							<BaseControl
-								id="geolonia-block/max-zoom"
+								value={ minZoom }
+								allowReset
+								min={ 0 }
+								max={ 24 }
+								onChange={ ( value ) => {
+									const minZoomValue = value ? Math.min( Math.max( value, 0 ), 24 ) : undefined;
+									setAttributes( { minZoom: minZoomValue } );
+								} }
+							/>
+							<RangeControl
 								label={ __( 'Max Zoom Level', 'geolonia-block' ) }
-							>
-								<RangeControl
-									value={ maxZoom }
-									allowReset
-									min={ 0 }
-									max={ 24 }
-									onChange={ ( value ) => {
-										const maxZoomValue = value ? Math.min( Math.max( value, 0 ), 24 ) : undefined;
-										setAttributes( { maxZoom: maxZoomValue } );
-									} }
-								/>
-							</BaseControl>
-							<BaseControl
-								id="geolonia-block/bearing"
+								value={ maxZoom }
+								allowReset
+								min={ 0 }
+								max={ 24 }
+								onChange={ ( value ) => {
+									const maxZoomValue = value ? Math.min( Math.max( value, 0 ), 24 ) : undefined;
+									setAttributes( { maxZoom: maxZoomValue } );
+								} }
+							/>
+							<RangeControl
 								label={ __( 'Direction', 'geolonia-block' ) }
-							>
-								<RangeControl
-									value={ bearing }
-									allowReset
-									min={ 0 }
-									max={ 359 }
-									onChange={ ( value ) => {
-										const bearingValue = value ? Math.min( Math.max( value, 0 ), 359 ) : undefined;
-										setAttributes( { bearing: bearingValue } );
-									} }
-								/>
-							</BaseControl>
+								value={ bearing }
+								allowReset
+								min={ 0 }
+								max={ 359 }
+								onChange={ ( value ) => {
+									const bearingValue = value ? Math.min( Math.max( value, 0 ), 359 ) : undefined;
+									setAttributes( { bearing: bearingValue } );
+								} }
+							/>
 							<BaseControl
-								id="geolonia-block/geolonia-control"
+								id="geolonia-geolonia-control"
 								label={ __( 'Logo Positon', 'geolonia-block' ) }
 							>
 								<SelectControl
 									value={ geoloniaControl }
-									options={ DIRECTION_CONTROLS.map( ( { label, value } ) => {
-										return { value, label };
-									} ) }
+									options={ DIRECTION_CONTROLS.map( ( { label, value } ) => ( {
+										value,
+										label,
+									} ) ) }
 									onChange={ ( value ) => setAttributes( { geoloniaControl: value } ) }
 								/>
 							</BaseControl>
-							<BaseControl
-								id="geolonia-block/navigation-control"
-								label={ __( 'Navigation Control Positon', 'geolonia-block' ) }
-							>
+							<BaseControl id="geolonia-map-style" label={ __( 'Map Style', 'geolonia-block' ) }>
 								<SelectControl
+									id="geolonia-block-navigation-control"
 									value={ navigationControl }
 									options={ [
 										{ label: __( 'Off', 'geolonia-block' ), value: 'off' },
-										...DIRECTION_CONTROLS.map( ( { label, value } ) => {
-											return { value, label };
-										} ),
+										...DIRECTION_CONTROLS.map( ( { label, value } ) => ( {
+											value,
+											label,
+										} ) ),
 									] }
 									onChange={ ( value ) => setAttributes( { navigationControl: value } ) }
 								/>
 							</BaseControl>
-							<BaseControl
-								id="geolonia-block/geolocation-control"
-								label={ __( 'Geolocation Control Positon', 'geolonia-block' ) }
-							>
+							<BaseControl id="geolonia-map-style" label={ __( 'Map Style', 'geolonia-block' ) }>
 								<SelectControl
+									label={ __( 'Geolocation Control Positon', 'geolonia-block' ) }
 									value={ geolocateControl }
 									options={ [
 										{ label: __( 'Off', 'geolonia-block' ), value: 'off' },
@@ -303,7 +282,7 @@ export default function Edit( { attributes, setAttributes } ) {
 								/>
 							</BaseControl>
 							<BaseControl
-								id="geolonia-block/fullscreen-control"
+								id="geolonia-fullscreen-control"
 								label={ __( 'Fullscreen Control Positon', 'geolonia-block' ) }
 							>
 								<SelectControl
@@ -318,7 +297,7 @@ export default function Edit( { attributes, setAttributes } ) {
 								/>
 							</BaseControl>
 							<BaseControl
-								id="geolonia-block/scale-control"
+								id="geolonia-scale-control"
 								label={ __( 'Scale Control Positon', 'geolonia-block' ) }
 							>
 								<SelectControl
@@ -332,7 +311,7 @@ export default function Edit( { attributes, setAttributes } ) {
 									onChange={ ( value ) => setAttributes( { scaleControl: value } ) }
 								/>
 							</BaseControl>
-							<BaseControl id="geolonia-block/lang" label={ __( 'Language', 'geolonia-block' ) }>
+							<BaseControl id="geolonia-language" label={ __( 'Language', 'geolonia-block' ) }>
 								<SelectControl
 									value={ lang }
 									options={ LANG_CONTROLS.map( ( { label, value } ) => {
@@ -361,25 +340,29 @@ export default function Edit( { attributes, setAttributes } ) {
 								checked={ lazyLoading }
 								onChange={ ( value ) => setAttributes( { lazyLoading: !! value } ) }
 							/>
-							<BaseControl id="geolonia-block/geojson" label={ __( 'GeoJSON', 'geolonia-block' ) }>
-								<TextControl
-									autoComplete="off"
-									value={ geoJsonUrl }
-									placeholder={ __( 'Enter GeoJSON file URL…', 'geolonia-block' ) }
-									onChange={ ( value ) => setAttributes( { geoJsonUrl: value } ) }
-								/>
-							</BaseControl>
+							<TextControl
+								label={ __( 'GeoJSON', 'geolonia-block' ) }
+								autoComplete="off"
+								value={ geoJsonUrl }
+								placeholder={ __( 'Enter GeoJSON file URL…', 'geolonia-block' ) }
+								onChange={ ( value ) => setAttributes( { geoJsonUrl: value } ) }
+							/>
 							<ToggleControl
 								label={ __( 'Enable Cluster', 'geolonia-block' ) }
 								checked={ cluster }
 								onChange={ ( value ) => setAttributes( { cluster: !! value } ) }
 							/>
 							<ColorControl
-								id="geolonia-block/clustor-color"
 								label={ __( 'Clustor Color', 'geolonia-block' ) }
 								value={ clusterColor }
 								onChange={ ( value ) => setAttributes( { clusterColor: value } ) }
 							/>
+							<p className="geolonia-inspector-controls-help">
+								{ __(
+									'Note: Click on "Apply Settings" to reflect items other than Map Style and Zoom Level. ',
+									'geolonia-block'
+								) }
+							</p>
 							{ useRender && (
 								<Button isPrimary variant="primary" onClick={ onRenderMap }>
 									{ __( 'Apply Settings', 'geolonia-block' ) }
@@ -388,40 +371,64 @@ export default function Edit( { attributes, setAttributes } ) {
 						</PanelBody>
 					</InspectorControls>
 					{ useRender ? (
-						<div
-							className="wp-block-geolonia-block__inner"
-							style={ {
-								width,
-								height,
-							} }
-						>
+						<>
 							{ isRender && (
-								<GeoloniaMap
-									apiKey={ apiKey }
-									className="wp-block-geolonia-block__map"
-									mapStyle={ mapStyle }
-									lat="33.735894648259588"
-									lng="135.37493290656204"
-									zoom={ zoom }
-									minZoom={ minZoom }
-									maxZoom={ maxZoom }
-									bearing={ bearing }
-									gestureHandling={ gestureHandling ? 'on' : 'off' }
-									render3d={ render3d ? 'on' : 'off' }
-									pitch={ pitch }
-									loader={ loader ? 'on' : 'off' }
-									lang={ lang }
-									geoloniaControl={ geoloniaControl }
-									navigationControl={ navigationControl }
-									geolocateControl={ geolocateControl }
-									fullscreenControl={ fullscreenControl }
-									scaleControl={ scaleControl }
-									geojson={ geoJsonUrl }
-									cluster={ cluster ? 'on' : 'off' }
-									clusterColor={ clusterColor }
-								/>
+								<>
+									<form
+										className="wp-block-geolonia-block__search-form"
+										onSubmit={ onSearchLatLng }
+									>
+										<TextControl
+											className="wp-block-geolonia-block__search-input"
+											autoComplete="off"
+											value={ searchAddress }
+											placeholder={ __( 'Enter address.…', 'geolonia-block' ) }
+											onChange={ ( value ) => setSearchAddress( value ) }
+										/>
+										<Button
+											className="wp-block-geolonia-block__search-button"
+											isPrimary
+											variant="primary"
+											type="submit"
+										>
+											{ __( 'Search' ) }
+										</Button>
+									</form>
+									<div
+										className="wp-block-geolonia-block__map-wrap"
+										style={ {
+											width,
+											height,
+										} }
+									>
+										<GeoloniaMap
+											apiKey={ apiKey }
+											className="wp-block-geolonia-block__map"
+											mapStyle={ mapStyle }
+											lat="33.735894648259588"
+											lng="135.37493290656204"
+											zoom={ zoom }
+											minZoom={ minZoom }
+											maxZoom={ maxZoom }
+											bearing={ bearing }
+											gestureHandling={ gestureHandling ? 'on' : 'off' }
+											render3d={ render3d ? 'on' : 'off' }
+											pitch={ pitch }
+											loader={ loader ? 'on' : 'off' }
+											lang={ lang }
+											geoloniaControl={ geoloniaControl }
+											navigationControl={ navigationControl }
+											geolocateControl={ geolocateControl }
+											fullscreenControl={ fullscreenControl }
+											scaleControl={ scaleControl }
+											geojson={ geoJsonUrl }
+											cluster={ cluster ? 'on' : 'off' }
+											clusterColor={ clusterColor }
+										/>
+									</div>
+								</>
 							) }
-						</div>
+						</>
 					) : (
 						<Placeholder
 							className="wp-block-geolonia-block__no-render"
