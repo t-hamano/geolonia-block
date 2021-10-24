@@ -11,6 +11,14 @@
 		"align": true
 	},
 	"attributes": {
+		"lat": {
+			"type": "number",
+			"default": "35.6809591"
+		},
+		"lng": {
+			"type": "number",
+			"default": "139.7673068"
+		},
 		"width": {
 			"type": "string",
 			"default": "100%"

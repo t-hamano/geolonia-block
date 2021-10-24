@@ -2,6 +2,8 @@
  * External dependencies
  */
 import { GeoloniaMap } from '@geolonia/embed-react';
+import { normalize } from '@geolonia/normalize-japanese-addresses';
+import prefactures from '../lib/japanese-prefectural-capitals/index.json';
 
 /**
  * WordPress dependencies
@@ -20,6 +22,7 @@ import {
 	ExternalLink,
 	PanelBody,
 	ToggleControl,
+	Notice,
 	__experimentalUnitControl as UnitControl,
 	__experimentalUseCustomUnits as useCustomUnits,
 } from '@wordpress/components';
@@ -44,6 +47,8 @@ import { ColorControl } from './components';
 
 export default function Edit( { attributes, setAttributes } ) {
 	const {
+		lat,
+		lng,
 		width,
 		height,
 		useRender,
@@ -74,7 +79,8 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	const [ apiKey, setApiKey ] = useState();
 	const [ isRender, setIsRender ] = useState( true );
-	const [ searchAddress, setSearchAddress ] = useState();
+	const [ searchAddress, setSearchAddress ] = useState( '' );
+	const [ searchNotice, setSearchNotice ] = useState();
 
 	const widthUnits = useCustomUnits( { availableUnits: WIDTH_UNITS } );
 	const heightUnits = useCustomUnits( { availableUnits: HEIGHT_UNITS } );
@@ -106,7 +112,52 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	const onSearchLatLng = ( event ) => {
 		event.preventDefault();
-		// TODO:テキストから緯度経度を探す処理
+		if ( searchAddress === '' ) return;
+
+		const notFoundText = __(
+			'The location could not be determined. Please correct the address and try again.',
+			'geolonia-block'
+		);
+
+		setSearchNotice( undefined );
+
+		normalize( searchAddress )
+			.then( ( json ) => {
+				// Can't find latitude and longitude.
+				if ( json.level === 0 ) {
+					setSearchNotice( {
+						status: 'error',
+						text: notFoundText,
+					} );
+				} else if ( json.level === 1 ) {
+					// Only the name of the prefecture can be determined (Normalization Level 1).
+					if ( json.pref !== '' && prefactures[ json.pref ] ) {
+						setAttributes( {
+							lat: prefactures[ json.pref ].lat,
+							lng: prefactures[ json.pref ].lng,
+						} );
+					}
+				} else if ( json.level === 2 ) {
+					// Only the name of the city can be determined (Normalization Level 2).
+					// 市区町村名までしか判別できなかった場合(正規化レベル2)は、
+					// @geolonia/jisx0402(https://github.com/geolonia/jisx0402)
+					// を使って市区町村名から市区町村コードを取得し、
+					// @geolonia/japanese-admins(https://github.com/geolonia/japanese-admins)
+					// を使って市区町村コードから緯度・経度を取得しています。
+				} else {
+					setAttributes( {
+						lat: json.lat,
+						lng: json.lng,
+					} );
+				}
+			} )
+			.catch( () => {
+				// Catch error.
+				setSearchNotice( {
+					status: 'error',
+					text: notFoundText,
+				} );
+			} );
 	};
 
 	// Force components to be re-rendered.
@@ -394,6 +445,14 @@ export default function Edit( { attributes, setAttributes } ) {
 											{ __( 'Search' ) }
 										</Button>
 									</form>
+									{ searchNotice?.text && (
+										<Notice
+											className="wp-block-geolonia-block__search-notice"
+											status={ searchNotice.status }
+										>
+											{ searchNotice.text }
+										</Notice>
+									) }
 									<div
 										className="wp-block-geolonia-block__map-wrap"
 										style={ {
@@ -405,8 +464,8 @@ export default function Edit( { attributes, setAttributes } ) {
 											apiKey={ apiKey }
 											className="wp-block-geolonia-block__map"
 											mapStyle={ mapStyle }
-											lat="33.735894648259588"
-											lng="135.37493290656204"
+											lat={ lat }
+											lng={ lng }
 											zoom={ zoom }
 											minZoom={ minZoom }
 											maxZoom={ maxZoom }
